@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
 //API endpoints handlers
-const index = require('./routes/index');
+const libraryApiHandler = require('./routes/libraryApiHandler');
 
 let app = express();
 
@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Mount specific API routes to matching handlers
-app.use('/', index);
+app.use('/api', libraryApiHandler);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
