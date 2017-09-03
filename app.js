@@ -10,6 +10,14 @@ const index = require('./routes/index');
 
 let app = express();
 
+//MongoDB database setup
+//Set up mongoose connection
+var mongoose = require('mongoose');
+var mongoDBurl = 'mongodb://mayales:music123@ds119014.mlab.com:19014/music-app-library';
+mongoose.connect(mongoDBurl);
+var mongoDatabase = mongoose.connection;
+mongoDatabase.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
