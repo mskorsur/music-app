@@ -5,13 +5,13 @@ const moment = require('moment');
 let artistSchema = new Schema({
     name: {type: String, required: true, minlength: 2, maxlength: 50},
     dateOfBirth: {type: Date}, 
-    albums: [{type: Schema.ObjectId, ref: 'Album', required: true}]
+    albums: [{type: Schema.ObjectId, ref: 'Album'}]
 });
 
 artistSchema
 .virtual('url')
 .get(function() {
-    return '/api/artist' + this._id;
+    return '/api/artist/' + this._id;
 });
 
 artistSchema
