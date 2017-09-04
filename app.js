@@ -4,6 +4,7 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
 
 //API endpoints handlers
 const libraryApiHandler = require('./routes/libraryApiHandler');
@@ -12,10 +13,10 @@ let app = express();
 
 //MongoDB database setup
 //Set up mongoose connection
-var mongoose = require('mongoose');
-var mongoDBurl = 'mongodb://mayales:music123@ds119014.mlab.com:19014/music-app-library';
+let mongoose = require('mongoose');
+let mongoDBurl = 'mongodb://mayales:music123@ds119014.mlab.com:19014/music-app-library';
 mongoose.connect(mongoDBurl);
-var mongoDatabase = mongoose.connection;
+let mongoDatabase = mongoose.connection;
 mongoDatabase.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // uncomment after placing your favicon in /public
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(expressValidator());
 
 //Mount specific API routes to matching handlers
 app.use('/api', libraryApiHandler);
@@ -41,10 +43,10 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  console.log(err);
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send('error' + err);
 });
 
 module.exports = app;
