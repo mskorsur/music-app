@@ -12,7 +12,7 @@ let albumSchema = new Schema({
 albumSchema
 .virtual('url')
 .get(function() {
-    return '/api/album' + this._id;
+    return '/api/album/' + this._id;
 });
 
 albumSchema
