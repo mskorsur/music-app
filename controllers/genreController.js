@@ -4,12 +4,12 @@ const Album = require('../models/album');
 exports.getGenreList = function(req, res, next) {
     Genre.find()
         .sort([['name', 'ascending']])
-        .exec(function doneGettingGenreList(err, listOfGenres) {
+        .exec(function doneGettingGenreList(err, genreList) {
             if (err) {
                 return next(err);
             }
             
-            res.json(listOfGenres);
+            res.json(genreList);
         });
 };
 

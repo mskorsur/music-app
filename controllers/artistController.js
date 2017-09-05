@@ -40,7 +40,7 @@ exports.createSingleArtist = function(req, res, next) {
 
     let artist = new Artist({
         name: req.body.name,
-        dateOfBirth: req.body.dateOfBirth
+        dateOfBirth: req.body.dateOfBirth || ''
     });
 
     if (errors) {

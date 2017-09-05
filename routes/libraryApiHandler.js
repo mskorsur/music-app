@@ -19,7 +19,7 @@ router.get('/album/list', albumController.getAlbumList);
 
 router.post('/album/:id/update', albumController.updateSingleAlbum);
 
-router.get('/artist:/id', albumController.getSingleAlbum);
+router.get('/album/:id', albumController.getSingleAlbum);
 
 router.post('/album/create', albumController.createSingleAlbum);
 
