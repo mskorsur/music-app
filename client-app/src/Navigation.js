@@ -1,15 +1,15 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 class Navigation extends React.Component {
     render() {
         return (
             <div className="row">
-            <div className="six columns">
-              <a className="button button-primary padded-button" href="#">Artists</a>
-              <a className="button button-primary padded-button" href="#">Albums</a>
+            <div className="twelve columns">
+              <Link to="/" className="button button-primary padded-button">Home</Link>
+              <Link to="/artists" className="button button-primary padded-button">Artists</Link>
+              <Link to="/albums" className="button button-primary padded-button">Albums</Link>
             </div>
-      
-            <div className="six columns"></div>
           </div>
         );
     }

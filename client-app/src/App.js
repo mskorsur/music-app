@@ -1,19 +1,12 @@
 import React, { Component } from 'react';
+import {BrowserRouter as Router} from 'react-router-dom';
+import {Route} from 'react-router-dom';
 import './App.css';
+
+import Welcome from './Welcome';
 import Navigation from './Navigation';
-import ListItemContainer from './ListItemContainer';
-import ArtistDetails from './ArtistDetails';
-import AlbumDetails from './AlbumDetails';
-
-const ARTISTS = [
-  {id: 1, name: 'Lady Gaga', url: '/artist/LadyGaga'},
-  {id: 2, name: 'Rihanna', url: '/artist/Rihanna'},
-  {id: 3, name: 'Bruno Mars', url: '/artist/BrunoMars'},
-  {id: 4, name: 'The Weeknd', url: '/artist/TheWeeknd'},
-];
-
-const ARTIST = {name: 'Lady Gaga', dob: '28-3-1986', albums: ['Joanne', 'The Fame Monster', 'Born This Way']};
-const ALBUM = {name: 'Born This Way', artist: 'Lady Gaga', releaseDate: '23-5-2011', genre: ['Pop', 'Electronic', 'Rock']};
+import ArtistContentContainer from './ArtistContentContainer';
+import AlbumContentContainer from './AlbumContentContainer';
 
 class App extends Component {
   constructor(props) {
@@ -27,16 +20,16 @@ class App extends Component {
 
   render() {
     return (
-    <div className="container">
-      <h2>Music library</h2>
-      <Navigation />
+      <Router>
+        <div className="container">
+          <h2>Music library</h2>
+          <Navigation />
 
-      <div className="row content-row">
-        <ListItemContainer type={this.state.contentType} data={ARTISTS}/>
-        <AlbumDetails type={this.state.contentType} data={ALBUM}/>
-      </div>
-
-    </div>
+          <Route path="/" exact component={Welcome} />
+          <Route path="/albums" component={AlbumContentContainer}/>
+          <Route path="/artists" component={ArtistContentContainer}/>
+        </div>
+      </Router>
     );
   }
 }
