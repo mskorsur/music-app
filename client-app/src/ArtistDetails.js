@@ -23,8 +23,8 @@ class ArtistDetails extends React.Component {
       <li>
         <strong>Albums:</strong>
         <ul>
-          {albums.map(album => {
-            return <li>{album}</li>
+          {albums.map((album, index) => {
+            return <li key={index}>{album}</li>
           })}
         </ul>
       </li>

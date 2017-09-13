@@ -24,8 +24,8 @@ class AlbumDetails extends React.Component {
           <li>
             <strong>Genres:</strong>
             <ul>
-              {genres.map(genre => {
-                return <li>{genre}</li>
+              {genres.map((genre, index) => {
+                return <li key={index}>{genre}</li>
               })}
             </ul>
           </li>
