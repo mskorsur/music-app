@@ -5,6 +5,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
+const cors = require('cors');
 
 //API endpoints handlers
 const libraryApiHandler = require('./routes/libraryApiHandler');
@@ -27,6 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressValidator());
+app.use(cors());
 
 //Mount specific API routes to matching handlers
 app.use('/api', libraryApiHandler);
