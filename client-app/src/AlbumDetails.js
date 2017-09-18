@@ -12,7 +12,7 @@ class AlbumDetails extends React.Component {
         return (
             <ul>
               <li><strong>Name:</strong> {album.name}</li>
-              <li><strong>Artist:</strong> {album.artist}</li>
+              <li><strong>Artist:</strong> {album.artist.name}</li>
               <li><strong>Release date:</strong> {album.releaseDate}</li>
               {this.renderGenres(album.genre)}
             </ul>
@@ -25,7 +25,7 @@ class AlbumDetails extends React.Component {
             <strong>Genres:</strong>
             <ul>
               {genres.map((genre, index) => {
-                return <li key={index}>{genre}</li>
+                return <li key={genre.id}>{genre.name}</li>
               })}
             </ul>
           </li>

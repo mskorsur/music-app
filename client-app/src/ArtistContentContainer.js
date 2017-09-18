@@ -1,23 +1,42 @@
 import React from 'react';
+import axios from 'axios';
 
 import ListItemContainer from './ListItemContainer';
 import ArtistDetails from './ArtistDetails';
 
-const ARTISTS = [
-    {id: 1, name: 'Lady Gaga', url: '/artist/LadyGaga'},
-    {id: 2, name: 'Rihanna', url: '/artist/Rihanna'},
-    {id: 3, name: 'Bruno Mars', url: '/artist/BrunoMars'},
-    {id: 4, name: 'The Weeknd', url: '/artist/TheWeeknd'},
-  ];
-  
-const ARTIST = {name: 'Lady Gaga', dob: '28-3-1986', albums: ['Joanne', 'The Fame Monster', 'Born This Way']};
-
 class ArtistContentContainer extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            artists: [],
+            currentArtist: {name: '', dateOfBirth: '', albums: []}
+        };
+
+        this.handleArtistLinkClick = this.handleArtistLinkClick.bind(this);
+    }
+
+    componentDidMount() {
+        axios.get('http://localhost:3030/api/artist/list')
+            .then(response => {
+                this.setState({artists: response.data});
+            });
+    }
+
+    handleArtistLinkClick(e) {
+        e.preventDefault();
+        const artistId = e.target.id;
+        axios.get(`http://localhost:3030/api/artist/${artistId}`)
+            .then(response => {
+                this.setState({currentArtist: response.data});
+            });
+    }
+
     render() {
         return (
             <div className="row content-row">
-                <ListItemContainer type={'artist'} data={ARTISTS}/>
-                <ArtistDetails data={ARTIST}/>
+                <ListItemContainer type={'artist'} data={this.state.artists} handleClick={this.handleArtistLinkClick}/>
+                <ArtistDetails artist={this.state.currentArtist}/>
             </div>            
         );
     }

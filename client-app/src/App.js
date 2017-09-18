@@ -9,15 +9,6 @@ import ArtistContentContainer from './ArtistContentContainer';
 import AlbumContentContainer from './AlbumContentContainer';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      contentType: 'artist',
-      data: ''
-    }
-  }
-
   render() {
     return (
       <Router>

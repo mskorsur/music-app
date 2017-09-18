@@ -1,23 +1,42 @@
 import React from 'react';
+import axios from 'axios';
 
 import ListItemContainer from './ListItemContainer';
 import AlbumDetails from './AlbumDetails';
 
-const ARTISTS = [
-    {id: 1, name: 'Lady Gaga', url: '/artist/LadyGaga'},
-    {id: 2, name: 'Rihanna', url: '/artist/Rihanna'},
-    {id: 3, name: 'Bruno Mars', url: '/artist/BrunoMars'},
-    {id: 4, name: 'The Weeknd', url: '/artist/TheWeeknd'},
-  ];
-  
-const ALBUM = {name: 'Born This Way', artist: 'Lady Gaga', releaseDate: '23-5-2011', genre: ['Pop', 'Electronic', 'Rock']};
-
 class AlbumContentContainer extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            albums: [],
+            currentAlbum: {name: '', artist: '', genre: []}
+        };
+
+        this.handleAlbumLinkClick = this.handleAlbumLinkClick.bind(this);
+    }
+
+    componentDidMount() {
+        axios.get('http://localhost:3030/api/album/list')
+        .then(response => {
+            this.setState({albums: response.data});
+        });
+    }
+
+    handleAlbumLinkClick(e) {
+        e.preventDefault();
+        const albumId = e.target.id;
+        axios.get(`http://localhost:3030/api/album/${albumId}`)
+            .then(response => {
+                this.setState({currentAlbum: response.data});
+            });
+    }
+
     render() {
         return (
             <div className="row content-row">
-                <ListItemContainer type={'album'} data={ARTISTS}/>
-                <AlbumDetails data={ALBUM}/>
+                <ListItemContainer type={'album'} data={this.state.albums} handleClick={this.handleAlbumLinkClick}/>
+                <AlbumDetails data={this.state.currentAlbum}/>
             </div>
         );
     }

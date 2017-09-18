@@ -12,7 +12,7 @@ class ArtistDetails extends React.Component {
     return (
       <ul>
         <li><strong>Name:</strong> {artist.name}</li>
-        <li><strong>Date of birth:</strong> {artist.dob}</li>
+        <li><strong>Date of birth:</strong> {artist.dateOfBirth}</li>
         {this.renderAlbums(artist.albums)}
       </ul>
     );
@@ -24,7 +24,7 @@ class ArtistDetails extends React.Component {
         <strong>Albums:</strong>
         <ul>
           {albums.map((album, index) => {
-            return <li key={index}>{album}</li>
+            return <li key={album.id}>{album.name}</li>
           })}
         </ul>
       </li>
@@ -35,7 +35,7 @@ class ArtistDetails extends React.Component {
         return (
             <div className="one-third column content-column">
             <h4>Artist details</h4> 
-             {this.renderArtistDetails(this.props.data)}
+             {this.renderArtistDetails(this.props.artist)}
             <button>Edit</button>
           </div>
         );
