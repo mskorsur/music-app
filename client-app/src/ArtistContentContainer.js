@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import ListItemContainer from './ListItemContainer';
 import ArtistDetails from './ArtistDetails';
+import CreateArtistForm from './CreateArtistForm';
 
 class ArtistContentContainer extends React.Component {
     constructor(props) {
@@ -10,10 +11,14 @@ class ArtistContentContainer extends React.Component {
 
         this.state = {
             artists: [],
-            currentArtist: {name: '', dateOfBirth: '', albums: []}
+            currentArtist: {name: '', dateOfBirth: '', albums: []},
+            creatingNewArtist: false
         };
 
         this.handleArtistLinkClick = this.handleArtistLinkClick.bind(this);
+        this.handleCreateNewArtistClick = this.handleCreateNewArtistClick.bind(this);
+        this.renderNewArtistForm = this.renderNewArtistForm.bind(this);
+        this.handleCancelFormClick = this.handleCancelFormClick.bind(this);
     }
 
     componentDidMount() {
@@ -32,11 +37,29 @@ class ArtistContentContainer extends React.Component {
             });
     }
 
+    handleCreateNewArtistClick() {
+        this.setState({creatingNewArtist: true});
+    }
+
+    handleCancelFormClick() {
+        this.setState({creatingNewArtist: false});
+    }
+
+    renderNewArtistForm() {
+        if (this.state.creatingNewArtist) {
+            return <CreateArtistForm handleCancel={this.handleCancelFormClick}/>;
+        }
+    }
+
     render() {
         return (
             <div className="row content-row">
-                <ListItemContainer type={'artist'} data={this.state.artists} handleClick={this.handleArtistLinkClick}/>
+                <ListItemContainer type={'artist'} 
+                                   data={this.state.artists} 
+                                   handleLinkClick={this.handleArtistLinkClick} 
+                                   handleButtonClick={this.handleCreateNewArtistClick}/>
                 <ArtistDetails artist={this.state.currentArtist}/>
+                {this.renderNewArtistForm()}
             </div>            
         );
     }
