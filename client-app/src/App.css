@@ -11,6 +11,10 @@
   overflow: auto;
 }
 
-.padded-button {
+.padding-right {
   margin-right: 1rem;
+}
+
+.padding-left {
+  margin-left: 1rem;
 }

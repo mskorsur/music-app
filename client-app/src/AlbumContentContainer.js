@@ -35,7 +35,7 @@ class AlbumContentContainer extends React.Component {
     render() {
         return (
             <div className="row content-row">
-                <ListItemContainer type={'album'} data={this.state.albums} handleClick={this.handleAlbumLinkClick}/>
+                <ListItemContainer type={'album'} data={this.state.albums} handleLinkClick={this.handleAlbumLinkClick}/>
                 <AlbumDetails data={this.state.currentAlbum}/>
             </div>
         );
