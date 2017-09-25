@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import ListItemContainer from './ListItemContainer';
 import AlbumDetails from './AlbumDetails';
+import CreateAlbumForm from './CreateAlbumForm';
 
 class AlbumContentContainer extends React.Component {
     constructor(props) {
@@ -10,10 +11,14 @@ class AlbumContentContainer extends React.Component {
 
         this.state = {
             albums: [],
-            currentAlbum: {name: '', artist: '', genre: []}
+            currentAlbum: {name: '', artist: '', genre: []},
+            creatingNewAlbum: false
         };
 
         this.handleAlbumLinkClick = this.handleAlbumLinkClick.bind(this);
+        this.handleCreateNewAlbumClick = this.handleCreateNewAlbumClick.bind(this);
+        this.renderNewAlbumForm = this.renderNewAlbumForm.bind(this);
+        this.handleCancelFormClick = this.handleCancelFormClick.bind(this);
     }
 
     componentDidMount() {
@@ -32,11 +37,29 @@ class AlbumContentContainer extends React.Component {
             });
     }
 
+    handleCreateNewAlbumClick() {
+        this.setState({creatingNewAlbum: true});
+    }
+
+    handleCancelFormClick() {
+        this.setState({creatingNewAlbum: false});
+    }
+
+    renderNewAlbumForm() {
+        if (this.state.creatingNewAlbum) {
+            return <CreateAlbumForm handleCancel={this.handleCancelFormClick}/>;
+        }
+    }
+
     render() {
         return (
             <div className="row content-row">
-                <ListItemContainer type={'album'} data={this.state.albums} handleLinkClick={this.handleAlbumLinkClick}/>
+                <ListItemContainer type={'album'} 
+                                   data={this.state.albums} 
+                                   handleLinkClick={this.handleAlbumLinkClick}
+                                   handleButtonClick={this.handleCreateNewAlbumClick}/>
                 <AlbumDetails data={this.state.currentAlbum}/>
+                {this.renderNewAlbumForm()}
             </div>
         );
     }
