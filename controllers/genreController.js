@@ -9,9 +9,19 @@ exports.getGenreList = function(req, res, next) {
                 return next(err);
             }
             
-            res.json(genreList);
+            let genreListFormatted = formatGenreListData(genreList);
+            res.json(genreListFormatted);
         });
 };
+
+function formatGenreListData(genreList) {
+    return genreList.map(genre => {
+        return {
+            id: genre._id,
+            name: genre.name
+        }
+    });
+}
 
 exports.createGenre = function(req, res, next) {
     req.checkBody('name', 'Genre name required').notEmpty(); 
