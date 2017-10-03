@@ -5,8 +5,8 @@ import './App.css';
 
 import Welcome from './Welcome';
 import Navigation from './Navigation';
-import ArtistContentContainer from './ArtistContentContainer';
-import AlbumContentContainer from './AlbumContentContainer';
+import ArtistContentContainer from './artist/ArtArtistContentContainer';
+import AlbumContentContainer from './album/AlbumContentContainer';
 
 class App extends Component {
   render() {

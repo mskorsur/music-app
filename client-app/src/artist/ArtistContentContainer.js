@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-import ListItemContainer from './ListItemContainer';
+import ListItemContainer from '../ListItemContainer';
 import ArtistDetails from './ArtistDetails';
 import CreateArtistForm from './CreateArtistForm';
 
