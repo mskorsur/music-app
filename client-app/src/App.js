@@ -5,7 +5,7 @@ import './App.css';
 
 import Welcome from './Welcome';
 import Navigation from './Navigation';
-import ArtistContentContainer from './artist/ArtArtistContentContainer';
+import ArtistContentContainer from './artist/ArtistContentContainer';
 import AlbumContentContainer from './album/AlbumContentContainer';
 
 class App extends Component {
