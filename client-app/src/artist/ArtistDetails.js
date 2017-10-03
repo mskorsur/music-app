@@ -6,6 +6,14 @@ class ArtistDetails extends React.Component {
 
     this.renderAlbums = this.renderAlbums.bind(this);
     this.renderArtistDetails = this.renderArtistDetails.bind(this);
+    this.handleEditArtistDetails = this.handleEditArtistDetails.bind(this);
+  }
+
+  handleEditArtistDetails() {
+    //editing can be done only if a user selected an artist
+    if (this.props.artist.name !== '') {
+      this.props.handleEdit();
+    }
   }
 
   renderArtistDetails(artist) {
@@ -36,7 +44,7 @@ class ArtistDetails extends React.Component {
             <div className="one-third column content-column">
             <h4>Artist details</h4> 
              {this.renderArtistDetails(this.props.artist)}
-            <button>Edit</button>
+            <button onClick={this.handleEditArtistDetails}>Edit</button>
           </div>
         );
     }

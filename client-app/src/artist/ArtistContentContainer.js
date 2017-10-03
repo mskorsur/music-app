@@ -4,6 +4,7 @@ import axios from 'axios';
 import ListItemContainer from '../ListItemContainer';
 import ArtistDetails from './ArtistDetails';
 import CreateArtistForm from './CreateArtistForm';
+import EditArtistForm from './EditArtistForm';
 
 class ArtistContentContainer extends React.Component {
     constructor(props) {
@@ -11,14 +12,18 @@ class ArtistContentContainer extends React.Component {
 
         this.state = {
             artists: [],
-            currentArtist: {name: '', dateOfBirth: '', albums: []},
-            creatingNewArtist: false
+            currentArtist: {id: '', name: '', dateOfBirth: '', albums: []},
+            creatingNewArtist: false,
+            editingCurrentArtist: false
         };
 
         this.handleArtistLinkClick = this.handleArtistLinkClick.bind(this);
         this.handleCreateNewArtistClick = this.handleCreateNewArtistClick.bind(this);
         this.renderNewArtistForm = this.renderNewArtistForm.bind(this);
         this.handleCancelFormClick = this.handleCancelFormClick.bind(this);
+        this.handleEditCurrentArtistClick = this.handleEditCurrentArtistClick.bind(this);
+        this.renderEditArtistForm = this.renderEditArtistForm.bind(this);
+        this.handleCancelEditClick = this.handleCancelEditClick.bind(this);
     }
 
     componentDidMount() {
@@ -38,16 +43,30 @@ class ArtistContentContainer extends React.Component {
     }
 
     handleCreateNewArtistClick() {
-        this.setState({creatingNewArtist: true});
+        this.setState({creatingNewArtist: true, editingCurrentArtist: false});
     }
 
     handleCancelFormClick() {
         this.setState({creatingNewArtist: false});
     }
 
+    handleEditCurrentArtistClick() {
+        this.setState({editingCurrentArtist: true, creatingNewArtist: false});
+    }
+
+    handleCancelEditClick() {
+        this.setState({editingCurrentArtist: false});
+    }
+
     renderNewArtistForm() {
         if (this.state.creatingNewArtist) {
             return <CreateArtistForm handleCancel={this.handleCancelFormClick}/>;
+        }
+    }
+
+    renderEditArtistForm() {
+        if (this.state.editingCurrentArtist) {
+            return <EditArtistForm artist={this.state.currentArtist} handleCancel={this.handleCancelEditClick}/>;
         }
     }
 
@@ -58,8 +77,9 @@ class ArtistContentContainer extends React.Component {
                                    data={this.state.artists} 
                                    handleLinkClick={this.handleArtistLinkClick} 
                                    handleButtonClick={this.handleCreateNewArtistClick}/>
-                <ArtistDetails artist={this.state.currentArtist}/>
+                <ArtistDetails artist={this.state.currentArtist} handleEdit={this.handleEditCurrentArtistClick}/>
                 {this.renderNewArtistForm()}
+                {this.renderEditArtistForm()}
             </div>            
         );
     }
