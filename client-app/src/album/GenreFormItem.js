@@ -5,16 +5,18 @@ class GenreFormItem extends React.Component {
         super(props);
 
         this.state = {
-            isChecked: false
+            isChecked: this.props.checked
         }
 
         this.handleCheckChange = this.handleCheckChange.bind(this);
     }
 
     handleCheckChange(event) {
-        this.setState({isChecked: true});
+        this.setState(prevState => ({
+            isChecked: !prevState.isChecked
+        }));
 
-        this.props.handleCheck(event.target.id);
+        this.props.handleCheck(event.target.id, !this.state.isChecked);
     }
 
     render() {

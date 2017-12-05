@@ -37,7 +37,7 @@ class AlbumDetails extends React.Component {
             <div className="one-third column content-column">
             <h4>Album details</h4> 
              {this.renderAlbumDetails(this.props.data)}
-            <button>Edit</button>
+            <button onClick={this.props.handleEdit}>Edit</button>
           </div>
         );
     }

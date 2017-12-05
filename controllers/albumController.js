@@ -129,7 +129,7 @@ function updateCorrespondingArtistAlbumList(artistId, newAlbum) {
         foundArtist.save(function doneSavingArtist(err, updatedArtist) {
             if (err) { console.log('Error during artist albums update ' + err); }
 
-            console.log('Artist albums update successful during new album creation ' + updatedArtist);
+            console.log('Artist albums update successful during album creation/update ' + updatedArtist);
         });
     });
 
@@ -159,18 +159,42 @@ exports.updateSingleAlbum = function(req,res) {
         Album.findById(albumId, function doneFindingAlbum(err, foundAlbum) {
             if (err) { return next(err); }
 
+            const originalArtist = foundAlbum.artist;
+
             foundAlbum._id = albumId;
             foundAlbum.name = album.name;
             foundAlbum.artist = album.artist;
             foundAlbum.releaseDate = (album.releaseDate == null) ? foundAlbum.releaseDate : album.releaseDate;
-            foundAlbum.genre.push(...album.genre);
+            foundAlbum.genre = [...album.genre];
 
             foundAlbum.save(function doneSavingAlbum(err, updatedAlbum) {
                 if (err) { return next(err); }
 
+                if (originalArtist !== updatedAlbum.artist) {
+                    updateCorrespondingArtistAlbumList(updatedAlbum.artist, updatedAlbum);
+                    deleteAlbumFromFormerArtistAlbumList(originalArtist, updatedAlbum);
+                }
+                
                 res.json({message: 'Album updated successfully', album_data: updatedAlbum});
             });
 
+        });
+    }
+
+    function deleteAlbumFromFormerArtistAlbumList(artistId, oldAlbum) {
+        Artist.findById(artistId, function doneFindingArtist(err, foundArtist) {
+            if (err) {
+                console.log('Error during artist albums update ' + err);
+            }
+    
+            let newAlbums = foundArtist.albums.filter(album => album.toString() != oldAlbum._id);
+            foundArtist.albums = [...newAlbums];
+            
+            foundArtist.save(function doneSavingArtist(err, updatedArtist) {
+                if (err) { console.log('Error during artist albums update ' + err); }
+    
+                console.log('Artist albums update successful during album creation/update ' + updatedArtist);
+            });
         });
     }
 
