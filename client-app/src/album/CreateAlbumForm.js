@@ -18,6 +18,8 @@ class CreateAlbumForm extends React.Component {
             apiGenres: []
         };
 
+        this._genreHelper = [];
+
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleArtistChange = this.handleArtistChange.bind(this);
         this.handleGenreChange = this.handleGenreChange.bind(this);
@@ -27,6 +29,7 @@ class CreateAlbumForm extends React.Component {
         this.renderArtistSelect = this.renderArtistSelect.bind(this);
         this.renderGenreCheckboxes = this.renderGenreCheckboxes.bind(this);
         this.renderCreationMessage = this.renderCreationMessage.bind(this);
+        this.setGenresToState = this.setGenresToState.bind(this);
     }
 
     componentDidMount() {
@@ -49,10 +52,24 @@ class CreateAlbumForm extends React.Component {
         this.setState({artist: event.target.value});
     }
 
-    handleGenreChange(genreId) {
-        this.setState(prevState => ({
-            genres: [...prevState.genres, genreId]
-        }));
+    handleGenreChange(genreId, isChecked) {
+        if (isChecked) {
+            let genres = [...this._genreHelper, genreId];
+            this._genreHelper = [...genres];
+        }
+        else { //!isChecked
+            let genres = [...this._genreHelper];
+            let genreToBeRemovedIndex = genres.indexOf(genreId);
+            genres.splice(genreToBeRemovedIndex, 1);
+            this._genreHelper = genres;
+
+        }
+    }
+
+    setGenresToState() {
+        this.setState({
+            genres: this._genreHelper
+        });
     }
 
     handleReleaseDateChange(event) {
@@ -92,7 +109,7 @@ class CreateAlbumForm extends React.Component {
             <label>
                 Genres:
                 {this.state.apiGenres.map(genre => {
-                    return <GenreFormItem key={genre.id} genre={genre} handleCheck={this.handleGenreChange} />
+                    return <GenreFormItem key={genre.id} genre={genre} checked={false} handleCheck={this.handleGenreChange} />
                 })}
             </label>  
         );
