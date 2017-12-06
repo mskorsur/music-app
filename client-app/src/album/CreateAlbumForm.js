@@ -111,6 +111,7 @@ class CreateAlbumForm extends React.Component {
                 {this.state.apiGenres.map(genre => {
                     return <GenreFormItem key={genre.id} genre={genre} checked={false} handleCheck={this.handleGenreChange} />
                 })}
+                <button type="button" onClick={this.setGenresToState}>Update Genres</button>
             </label>  
         );
     }
