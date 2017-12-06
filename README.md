@@ -12,9 +12,4 @@ for all data requirements.
 
 
 To see the app working in actions, run the following commands:
-~~~
-npm run devstart
-~~~ in main directory and
-~~~
-npm start
-~~~ in client-app subdirectory.
+`npm run devstart` in main directory and `npm start` in client-app subdirectory.
