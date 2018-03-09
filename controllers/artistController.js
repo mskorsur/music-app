@@ -1,17 +1,17 @@
 const Artist = require('../models/artist');
 const Album = require('../models/album');
 
-exports.getArtistList = function(req, res, next) {
-    Artist.find()
-        .sort([['name', 'ascending']])
-        .exec(function doneGettingArtistList(err, artistList) {
-            if (err) {
-                return next(err);
-            }
-
-            let artistListFormatted = formatArtistListData(artistList);
-            res.json(artistListFormatted);
-        });
+exports.getArtistList = async function(req, res, next) {
+    try {
+        let artistList = await Artist.find()
+                    .sort([['name', 'ascending']])
+                    .exec();
+        
+        let artistListFormatted = formatArtistListData(artistList);
+        res.json(artistListFormatted);
+    } catch(err) {
+        return next(err);
+    }
 };
 
 function formatArtistListData(artistList) {
@@ -25,20 +25,19 @@ function formatArtistListData(artistList) {
     }); 
 }
 
-exports.getSingleArtist = function(req, res, next) {
+exports.getSingleArtist = async function(req, res, next) {
     let artistId = req.params.id;
 
-    Artist.findById(artistId)
-        .populate('albums')
-        .exec(function doneGettingSingleArtist(err, artist) {
-            if (err) {
-                return next(err);
-            }
-
-            artist = formatArtistData(artist);
-            res.json(artist);
-        });
-
+    try { 
+        let artist = await Artist.findById(artistId)
+                    .populate('albums')
+                    .exec();
+        
+        artist = formatArtistData(artist);
+        res.json(artist);
+    } catch(err) {
+        return next(err);
+    }
 };
 
 function formatArtistData(artist) {
@@ -63,7 +62,7 @@ function formatArtistAlbums(artistAlbums) {
     });
 }
 
-exports.createSingleArtist = function(req, res, next) {
+exports.createSingleArtist = async function(req, res, next) {
     req.checkBody('name', 'Artist name required');
 
     req.sanitize('name').escape();
@@ -81,16 +80,17 @@ exports.createSingleArtist = function(req, res, next) {
         return;
     }
     else {
-        artist.save(function doneSavingArtist(err) {
-            if (err) { return next(err); }
-
+        try {
+            await artist.save();
             res.json({message: 'Artist created successfully', artist_id: artist._id});
-        });
+        } catch(err) {
+            return next(err);
+        }
     }
 
 };
 
-exports.updateSingleArtist = function(req, res, next) {
+exports.updateSingleArtist = async function(req, res, next) {
     let artistId = req.params.id;
     req.checkBody('name', 'Artist name required');
 
@@ -110,20 +110,18 @@ exports.updateSingleArtist = function(req, res, next) {
         return;
     }
     else {
-        Artist.findById(artistId, function doneFindingArtist(err, foundArtist) {
-            if (err) { return next(err); }
+        try {
+            let foundArtist = await Artist.findById(artistId);
 
-           foundArtist._id = artistId;
-           foundArtist.name = artist.name;
-           foundArtist.dateOfBirth = (artist.dateOfBirth == null) ? foundArtist.dateOfBirth : artist.dateOfBirth;
-           foundArtist.albums.push(...artist.albums);
+            foundArtist._id = artistId;
+            foundArtist.name = artist.name;
+            foundArtist.dateOfBirth = (artist.dateOfBirth == null) ? foundArtist.dateOfBirth : artist.dateOfBirth;
+            foundArtist.albums.push(...artist.albums);
 
-           foundArtist.save(function doneSavingArtist(err, updatedArtist) {
-               if (err) { return next(err); }
-
-               res.json({message: 'Artist updated successfully', artist_data: updatedArtist});
-           });
-        });
+            await foundArtist.save();
+            res.json({message: 'Artist updated successfully', artist_data: updatedArtist});
+        } catch(err) {
+            return next(err);
+        }
     }
-
 };

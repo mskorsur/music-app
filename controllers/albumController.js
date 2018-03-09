@@ -3,17 +3,17 @@ const Artist = require('../models/artist');
 const Genre = require('../models/genre');
 const async = require('async');
 
-exports.getAlbumList = function(req,res) {
-    Album.find()
-        .sort([['name', 'ascending']])
-        .exec(function doneGettingAlbumList(err, albumList) {
-            if (err) {
-                return next(err);
-            }
+exports.getAlbumList = async function(req,res) {
+    try {
+        let albumList = await Album.find()
+                        .sort([['name', 'ascending']])
+                        .exec();
 
-            let albumListFormatted = formatAlbumList(albumList);
-            res.json(albumListFormatted);
-        });
+        let albumListFormatted = formatAlbumList(albumList);
+        res.json(albumListFormatted);
+    } catch(err) {
+        return next(err);
+    }
 };
 
 function formatAlbumList(albumList) {
@@ -27,21 +27,20 @@ function formatAlbumList(albumList) {
     });
 }
 
-exports.getSingleAlbum = function(req, res, next) {
+exports.getSingleAlbum = async function(req, res, next) {
     let albumId = req.params.id;
 
-    Album.findById(albumId)
-        .populate('artist')
-        .populate('genre')
-        .exec(function doneGettingSingleAlbum(err, album) {
-            if (err) {
-                return next(err);
-            }
+    try { 
+        let album = await Album.findById(albumId)
+                    .populate('artist')
+                    .populate('genre')
+                    .exec();
 
-            album = formatAlbumData(album);
-            res.json(album);
-        });
-
+        album = formatAlbumData(album);
+        res.json(album);
+    } catch (err) {
+        return next(err);
+    }
 };
 
 function formatAlbumData(album) {
@@ -75,7 +74,7 @@ function formatAlbumGenreData(albumGenres) {
     });
 }
 
-exports.createSingleAlbum = function(req, res, next) {
+exports.createSingleAlbum = async function(req, res, next) {
     checkIfRequiredAlbumDataIsPresent(req);
     escapeAndTrimAlbumData(req);
 
@@ -93,14 +92,17 @@ exports.createSingleAlbum = function(req, res, next) {
         return;
     } 
     else {
-        album.save(function doneSavingAlbum(err) {
-            if (err) { return next(err); }
+        try {
+            await album.save();
 
             //album is saved successfully so update corresponding artist's album
             //list with this newly added album
-            updateCorrespondingArtistAlbumList(req.body.artist, album);
+            await updateCorrespondingArtistAlbumList(req.body.artist, album);
             res.json({message: 'Album created successfully', album_id: album._id});
-        });
+
+        } catch (err) {
+            return next(err);
+        }
     }
 };
 
@@ -119,23 +121,19 @@ function escapeAndTrimAlbumData(req) {
     req.sanitize('genre').trim();
 }
 
-function updateCorrespondingArtistAlbumList(artistId, newAlbum) {
-    Artist.findById(artistId, function doneFindingArtist(err, foundArtist) {
-        if (err) {
-            console.log('Error during artist albums update ' + err);
-        }
-
+async function updateCorrespondingArtistAlbumList(artistId, newAlbum) {
+    try {
+        let foundArtist = await Artist.findById(artistId);
         foundArtist.albums.push(newAlbum);
-        foundArtist.save(function doneSavingArtist(err, updatedArtist) {
-            if (err) { console.log('Error during artist albums update ' + err); }
 
-            console.log('Artist albums update successful during album creation/update ' + updatedArtist);
-        });
-    });
-
+        let updatedArtist = await foundArtist.save();
+        console.log('Artist albums update successful during album creation/update ' + updatedArtist);
+    } catch(err) {
+        console.log('Error during artist albums update ' + err);
+    }
 }
 
-exports.updateSingleAlbum = function(req,res) {
+exports.updateSingleAlbum = async function(req,res) {
     let albumId = req.params.id;
 
     checkIfRequiredAlbumDataIsPresent(req);
@@ -156,46 +154,40 @@ exports.updateSingleAlbum = function(req,res) {
         return;
     } 
     else {
-        Album.findById(albumId, function doneFindingAlbum(err, foundAlbum) {
-            if (err) { return next(err); }
+        try {
+            let foundAlbum = await Album.findById(albumId);
 
             const originalArtist = foundAlbum.artist;
-
             foundAlbum._id = albumId;
             foundAlbum.name = album.name;
             foundAlbum.artist = album.artist;
             foundAlbum.releaseDate = (album.releaseDate == null) ? foundAlbum.releaseDate : album.releaseDate;
             foundAlbum.genre = [...album.genre];
 
-            foundAlbum.save(function doneSavingAlbum(err, updatedAlbum) {
-                if (err) { return next(err); }
+            let updatedAlbum = await foundAlbum.save();
 
-                if (originalArtist !== updatedAlbum.artist) {
-                    updateCorrespondingArtistAlbumList(updatedAlbum.artist, updatedAlbum);
-                    deleteAlbumFromFormerArtistAlbumList(originalArtist, updatedAlbum);
-                }
-                
-                res.json({message: 'Album updated successfully', album_data: updatedAlbum});
-            });
-
-        });
+            if (originalArtist !== updatedAlbum.artist) {
+                await updateCorrespondingArtistAlbumList(updatedAlbum.artist, updatedAlbum);
+                await deleteAlbumFromFormerArtistAlbumList(originalArtist, updatedAlbum);
+            }
+            
+            res.json({message: 'Album updated successfully', album_data: updatedAlbum});
+        } catch(err) {
+            return next(err);
+        }
     }
 
-    function deleteAlbumFromFormerArtistAlbumList(artistId, oldAlbum) {
-        Artist.findById(artistId, function doneFindingArtist(err, foundArtist) {
-            if (err) {
-                console.log('Error during artist albums update ' + err);
-            }
-    
+    async function deleteAlbumFromFormerArtistAlbumList(artistId, oldAlbum) {
+        try {
+            let foundArtist = await Artist.findById(artistId);
+
             let newAlbums = foundArtist.albums.filter(album => album.toString() != oldAlbum._id);
             foundArtist.albums = [...newAlbums];
-            
-            foundArtist.save(function doneSavingArtist(err, updatedArtist) {
-                if (err) { console.log('Error during artist albums update ' + err); }
-    
-                console.log('Artist albums update successful during album creation/update ' + updatedArtist);
-            });
-        });
-    }
 
+            let updatedArtist = await foundArtist.save();
+            console.log('Artist albums update successful during album creation/update ' + updatedArtist);
+        } catch(err) {
+            console.log('Error during artist albums update ' + err);
+        }
+    }
 };

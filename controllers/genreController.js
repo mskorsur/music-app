@@ -1,17 +1,18 @@
 const Genre = require('../models/genre');
 const Album = require('../models/album');
 
-exports.getGenreList = function(req, res, next) {
-    Genre.find()
-        .sort([['name', 'ascending']])
-        .exec(function doneGettingGenreList(err, genreList) {
-            if (err) {
-                return next(err);
-            }
-            
-            let genreListFormatted = formatGenreListData(genreList);
-            res.json(genreListFormatted);
-        });
+exports.getGenreList = async function(req, res, next) {
+
+    try {
+        let genreList = await Genre.find()
+                    .sort([['name', 'ascending']])
+                    .exec();
+        
+        let genreListFormatted = formatGenreListData(genreList);
+        res.json(genreListFormatted);
+    } catch(err) {
+        return next(err);
+    }
 };
 
 function formatGenreListData(genreList) {
@@ -23,7 +24,7 @@ function formatGenreListData(genreList) {
     });
 }
 
-exports.createGenre = function(req, res, next) {
+exports.createGenre = async function(req, res, next) {
     req.checkBody('name', 'Genre name required').notEmpty(); 
     req.sanitize('name').escape();
     req.sanitize('name').trim();
@@ -41,20 +42,19 @@ exports.createGenre = function(req, res, next) {
     } 
     else {
         //Check if Genre with same name already exists
-        Genre.findOne({ 'name': req.body.name })
-            .exec( function(err, foundGenre) {
-                 if (err) { return next(err); }
-                 
-                 if (foundGenre) { 
-                    res.json({message: 'Genre exists already', genre_id: foundGenre._id});
-                 }
-                 else {
-                     genre.save(function (err) {
-                       if (err) { return next(err); }
-                       res.json({message: 'Genre successfully added', genre_id: genre._id});
-                     });
-                     
-                 }
-             });
+        try {
+            let existingGenre = await Genre.findOne({ 'name': req.body.name }).exec();
+
+            if (existingGenre) { 
+                res.json({message: 'Genre exists already', genre_id: existingGenre._id});
+            }
+            else {
+                await genre.save();
+                res.json({message: 'Genre successfully added', genre_id: genre._id});
+            }
+
+        } catch(err) {
+            return next(err)
+        }
     }
 };
